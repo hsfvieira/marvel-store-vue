@@ -1,26 +1,34 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="store"> 
+      <Comic v-for="comic in comics" :key="comic.id" :title="comic.title" :image="comic.thumbnail" :price="comic.prices[0].price"></Comic>
+    </div>
+  
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import getData from './lib/api'
+import Comic from './components/Comic'
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    Comic
+  },
+  data() {
+    return {
+      comics: []
+    }
+  },
+  async mounted() {
+    const { data: { results: comics } } = await getData()
+    this.comics = comics
   }
 }
+
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+.store {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>
