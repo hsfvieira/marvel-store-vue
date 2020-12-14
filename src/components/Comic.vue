@@ -1,31 +1,43 @@
 <template>
 <div class="comic">
-    <img :src="image.path + '/portrait_incredible.' + image.extension" />
+    <img :src="data.thumbnail.path + '/portrait_incredible.' + data.thumbnail.extension" />
     <div>
         <div>
-            <h2 :title="title">{{ titleSlice }}</h2>
+            <h2 :title="data.title">{{ titleSlice }}</h2>
             <p>{{ priceFormated }}</p>
         </div>
-        <button>Comprar</button>
+        <button @click="addToCart(data)">Comprar</button>
     </div>
 </div>
 </template>
 
 <script>
+import { computed } from 'vue'
+import { verifyCartExists } from '../lib/cart'
+
 export default {
     props: {
-        title: String,
-        image: Object,
-        price: Number
+        data: Object
     },
-    computed: {
-        priceFormated() {
-            const priceString = this.price.toFixed(2).toString()
-            return `R$ ${priceString.replace(/\./, ',')}`
-        },
-        titleSlice() {
-            return this.title.replace(/^(.{40})(.+)/, '$1...')
+    setup(props) {
+
+        const priceFormated = computed(() => {
+            const priceString = props.data.prices[0].price.toFixed(2).toString()
+            return `$ ${priceString.replace(/\./, ',')}`
+        })
+
+        const titleSlice = computed(() => {
+            return props.data.title.replace(/^(.{40})(.+)/, '$1...')
+        })
+
+        function addToCart(comic) {
+            verifyCartExists()
+            const cartList = JSON.parse(localStorage.cart)
+            cartList.push(comic)
+            localStorage.cart = JSON.stringify(cartList)
         }
+
+        return { priceFormated, titleSlice, addToCart }
     }
 }
 </script>
@@ -55,7 +67,6 @@ export default {
     margin-left: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
 }
 
 .comic > div > div {
@@ -63,7 +74,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px 0;
+    margin-bottom: 10px;
 }
 
 .comic div h2 {
