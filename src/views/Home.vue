@@ -1,7 +1,10 @@
 <template>
-  <input placeholder="Buscar Quadrinho" v-model="comicTitle" />
+  <input placeholder="Buscar Quadrinho" v-model.trim="comicTitle" />
+  <router-link to="/cart">
+    <button>Ir ao carrinho</button>
+  </router-link>
   <div class="store"> 
-    <Comic v-for="comic in comics" :key="comic.id" :data="comic"></Comic>
+    <Comic :currencyValue="currency" v-for="comic in comics" :key="comic.id" :data="comic" ></Comic>
   </div>
   <button @click="previousPage()">Voltar</button>
   <button @click="nextPage()">Próxima</button>
@@ -9,6 +12,7 @@
 
 <script>
 import getData from '../lib/api'
+import getDataCurrency from '../lib/currency'
 import Comic from '../components/Comic'
 import { onMounted, ref, watch } from 'vue'
 
@@ -24,9 +28,11 @@ export default {
     const comics = ref([])
     const total = ref(0)
     const offset = ref(0)
+	const currency = ref(0)
 
     /*hooks*/
     onMounted(async () => {
+      currency.value = await getDataCurrency('BRL') 
       const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
       comics.value = newComics
       total.value = newTotal
@@ -52,15 +58,14 @@ export default {
     }
 
     /*watches*/
-
-    watch(async () => {
+    watch([comicTitle], async () => {
       offset.value = 0
       const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
       comics.value = newComics
       total.value = newTotal
     })
 
-    return { nextPage, previousPage, comicTitle, comics, total, offset }
+    return { nextPage, previousPage, comicTitle, comics, total, offset, currency }
   }
 }
 

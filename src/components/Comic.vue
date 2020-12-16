@@ -13,29 +13,22 @@
 
 <script>
 import { computed } from 'vue'
-import { verifyCartExists } from '../lib/cart'
+import { addToCart } from '../lib/cart'
 
 export default {
     props: {
-        data: Object
+        data: Object,
+		currencyValue: Number
     },
     setup(props) {
-
         const priceFormated = computed(() => {
-            const priceString = props.data.prices[0].price.toFixed(2).toString()
-            return `$ ${priceString.replace(/\./, ',')}`
+			const price = (props.data.prices[0].price * props.currencyValue).toFixed(2)
+            return `R$ ${price.replace(/\./, ',')}`
         })
 
         const titleSlice = computed(() => {
             return props.data.title.replace(/^(.{40})(.+)/, '$1...')
         })
-
-        function addToCart(comic) {
-            verifyCartExists()
-            const cartList = JSON.parse(localStorage.cart)
-            cartList.push(comic)
-            localStorage.cart = JSON.stringify(cartList)
-        }
 
         return { priceFormated, titleSlice, addToCart }
     }
