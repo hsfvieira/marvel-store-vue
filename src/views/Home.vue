@@ -14,59 +14,54 @@
 import getData from '../lib/api'
 import getDataCurrency from '../lib/currency'
 import Comic from '../components/Comic'
-import { onMounted, ref, watch } from 'vue'
 
 export default {
 
   components: {
     Comic
   },
-
-  setup() {
-    
-    const comicTitle = ref('')
-    const comics = ref([])
-    const total = ref(0)
-    const offset = ref(0)
-	const currency = ref(0)
-
-    /*hooks*/
-    onMounted(async () => {
-      currency.value = await getDataCurrency('BRL') 
-      const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
-      comics.value = newComics
-      total.value = newTotal
-    })
-
-    /*methods*/
-    async function nextPage() {
-      if(offset.value + 20 >= total.value) {
+  data() {
+    return {
+      comicTitle: '',
+      comics: [],
+      total: 0,
+      offset: 0,
+      currency: 0
+    }
+  },
+  async mounted() {
+    this.currency = await getDataCurrency('BRL') 
+    const { data: { results: newComics, total: newTotal } } = await getData(this.comicTitle, this.offset)
+    this.comics = newComics
+    this.total = newTotal
+  },
+  methods: {
+    async nextPage() {
+      if(this.offset + 20 >= this.total) {
         return null
       }
 
-      offset.value += 20
-      const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
-      comics.value = newComics
-      total.value = newTotal
+      this.offset += 20
+      const { data: { results: newComics, total: newTotal } } = await getData(this.comicTitle, this.offset)
+      this.comics = newComics
+      this.total = newTotal
+    },
+    async previousPage() {
+      this.offset = this.offset - 20 <= 0 ? 0 : this.offset - 20
+      const { data: { results: newComics, total: newTotal } } = await getData(this.comicTitle, this.offset)
+      this.comics = newComics
+      this.total = newTotal
     }
-
-    async function previousPage() {
-      offset.value = offset.value - 20 <= 0 ? 0 : offset.value - 20
-      const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
-      comics.value = newComics
-      total.value = newTotal
+  },
+  watch: {
+    async comicTitle() {
+      this.offset = 0
+      const { data: { results: newComics, total: newTotal } } = await getData(this.comicTitle, this.offset)
+      this.comics = newComics
+      this.total = newTotal
     }
-
-    /*watches*/
-    watch([comicTitle], async () => {
-      offset.value = 0
-      const { data: { results: newComics, total: newTotal } } = await getData(comicTitle.value, offset.value)
-      comics.value = newComics
-      total.value = newTotal
-    })
-
-    return { nextPage, previousPage, comicTitle, comics, total, offset, currency }
   }
+
 }
 
 </script>

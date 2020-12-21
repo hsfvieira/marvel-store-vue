@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { computed } from 'vue'
 import { addToCart } from '../lib/cart'
 
 export default {
@@ -20,17 +19,19 @@ export default {
         data: Object,
 		currencyValue: Number
     },
-    setup(props) {
-        const priceFormated = computed(() => {
-			const price = (props.data.prices[0].price * props.currencyValue).toFixed(2)
+    data() {
+        return {
+            addToCart
+        }
+    },
+    computed: {
+        priceFormated() {
+            const price = (this.data.prices[0].price * this.currencyValue).toFixed(2)
             return `R$ ${price.replace(/\./, ',')}`
-        })
-
-        const titleSlice = computed(() => {
-            return props.data.title.replace(/^(.{40})(.+)/, '$1...')
-        })
-
-        return { priceFormated, titleSlice, addToCart }
+        },
+        titleSlice() {
+            return this.data.title.replace(/^(.{40})(.+)/, '$1...')
+        }
     }
 }
 </script>

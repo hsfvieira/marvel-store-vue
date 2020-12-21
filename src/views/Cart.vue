@@ -14,19 +14,15 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
-
 
 export default {
-    setup() {
-
-        const comicsInCart = ref([])
-
-        onMounted(() => {
-            comicsInCart.value = JSON.parse(localStorage.cart)
-        })
-
-        return { comicsInCart }
+    data() {
+        return {
+            comicsInCart: []
+        }
+    },
+    mounted() {
+        this.comicsInCart = JSON.parse(localStorage.cart)
     }
 }
 </script>
