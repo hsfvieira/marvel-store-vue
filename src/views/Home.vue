@@ -4,14 +4,14 @@
     <button>Ir ao carrinho</button>
   </router-link>
   <div class="store"> 
-    <Comic :currencyValue="currency" v-for="comic in comics" :key="comic.id" :data="comic" ></Comic>
+    <comic :currencyValue="currency" v-for="comic in comics" :key="comic.id" :data="comic" ></comic>
   </div>
   <button @click="previousPage()">Voltar</button>
   <button @click="nextPage()">Próxima</button>
 </template>
 
 <script>
-import getData from '../lib/api'
+import getData from '../lib/comic'
 import getDataCurrency from '../lib/currency'
 import Comic from '../components/Comic'
 

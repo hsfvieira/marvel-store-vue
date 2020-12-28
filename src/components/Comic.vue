@@ -3,7 +3,7 @@
     <img :src="data.thumbnail.path + '/portrait_incredible.' + data.thumbnail.extension" />
     <div>
         <div>
-            <h2 :title="data.title">{{ titleSlice }}</h2>
+            <router-link :to="'/comic/' + data.id"><h2 :title="data.title">{{ titleSlice }}</h2></router-link>
             <p>{{ priceFormated }}</p>
         </div>
         <button @click="addToCart(data)">Comprar</button>
@@ -71,17 +71,22 @@ export default {
     margin-bottom: 10px;
 }
 
-.comic div h2 {
+.comic div a {
+    text-decoration: none;
+    color: black;
+}
+
+.comic div a h2 {
     font-size: 14px;
 }
 
-.comic div h2, .comic div p {
+.comic div a h2, .comic div p {
     margin: 0;
-    cursor: default;
 }
 
 .comic div p {
     font-size: 10px;
+    cursor: default;
 }
 
 .comic div button {
